@@ -1,5 +1,6 @@
 package order;
 
+import com.github.javafaker.Faker;
 import http.CourierApi;
 import http.OrderApi;
 import io.qameta.allure.Description;
@@ -17,11 +18,14 @@ public class AcceptOrderTest {
 
     private final OrderApi orderApi = new OrderApi();
     private final CourierApi courierApi = new CourierApi();
-    private final Courier courier = new Courier(RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomNumeric(4), RandomStringUtils.randomAlphabetic(5));
     private Order order = new Order();
+    private final Faker faker = new Faker();
+
+    private Courier courier;
 
     @Before
     public void prepare() {
+        courier = new Courier(String.valueOf(faker.number().numberBetween(100000, 9999999)), String.valueOf(faker.number().numberBetween(1000, 9999)), faker.name().firstName());
         courierApi.createCourier(courier);
         courier.setId(courierApi.loginCourier(courier).path("id").toString());
         order = orderApi.getOrderList().body().as(OrderListResponse.class).getOrders().get(0);
@@ -74,7 +78,7 @@ public class AcceptOrderTest {
     @DisplayName("Can't accept an order with invalid a id")
     @Description("Can't accept an order with the invalid field: 'id'. Returns an error 'Заказа с таким id не существует'")
     public void withInvalidIdTest() {
-        order.setId(Integer.parseInt(RandomStringUtils.randomNumeric(9)));
+        order.setId(faker.number().numberBetween(1000000, 100000000));
 
         orderApi.acceptOrder(courier.getId(), order.getId())
                 .then()
@@ -92,7 +96,7 @@ public class AcceptOrderTest {
     @DisplayName("Can't accept an order with invalid a courier's id")
     @Description("Can't accept an order with the invalid field: 'courierId'. Returns an error 'Курьера с таким id не существует'")
     public void withInvalidCourierIdTest() {
-        courier.setId(RandomStringUtils.randomNumeric(1));
+        courier.setId(String.valueOf(faker.number().numberBetween(1, 9)));
 
         orderApi.acceptOrder(courier.getId(), order.getId())
                 .then()

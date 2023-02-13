@@ -1,10 +1,10 @@
 package courier.remove;
 
+import com.github.javafaker.Faker;
 import http.CourierApi;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import models.Courier;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,8 +13,9 @@ import static org.hamcrest.Matchers.equalTo;
 public class RemoveCourierTest {
 
     private final CourierApi courierApi = new CourierApi();
+    private final Faker faker = new Faker();
 
-    private final Courier courier = new Courier(RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomNumeric(4), RandomStringUtils.randomAlphabetic(5));
+    private final Courier courier = new Courier(String.valueOf(faker.number().numberBetween(100000, 9999999)), String.valueOf(faker.number().numberBetween(1000, 9999)), faker.name().firstName());
 
     @Before
     public void createCourier() {

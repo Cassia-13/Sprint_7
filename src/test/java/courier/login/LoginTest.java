@@ -1,10 +1,10 @@
 package courier.login;
 
+import com.github.javafaker.Faker;
 import http.CourierApi;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import models.Courier;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,8 +13,9 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class LoginTest {
     private final CourierApi courierApi = new CourierApi();
+    private final Faker faker = new Faker();
 
-    private final Courier courier = new Courier(RandomStringUtils.randomAlphabetic(5), RandomStringUtils.randomNumeric(4), RandomStringUtils.randomAlphabetic(5));
+    private final Courier courier = new Courier(String.valueOf(faker.number().numberBetween(100000, 9999999)), String.valueOf(faker.number().numberBetween(1000, 9999)), faker.name().firstName());
 
     @Before
     public void createCourier() {
@@ -49,7 +50,7 @@ public class LoginTest {
     @Description("Can login only with the correct courier's password. Returns an error 'Учетная запись не найдена'")
     public void invalidPasswordTest() {
         String correctPassword = courier.getPassword();
-        courier.setPassword(RandomStringUtils.randomNumeric(4));
+        courier.setPassword(String.valueOf(faker.number().numberBetween(1000, 9999)));
 
         courierApi.loginCourier(courier)
                 .then()
@@ -65,7 +66,7 @@ public class LoginTest {
     @Description("Can login only with the correct courier's login. Returns an error 'Учетная запись не найдена'")
     public void invalidLoginTest() {
         String correctLogin = courier.getLogin();
-        courier.setLogin(RandomStringUtils.randomAlphabetic(5));
+        courier.setLogin(faker.job().field());
 
         courierApi.loginCourier(courier)
                 .then()

@@ -1,5 +1,9 @@
 package models.order;
 
+import com.github.javafaker.Faker;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class Order {
@@ -21,6 +25,23 @@ public class Order {
 
     public Order() {
 
+    }
+
+    public Order(List<String> color) {
+        Faker faker = new Faker();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        this.color = color;
+
+
+        this.firstName = faker.name().firstName();
+        this.lastName = faker.name().lastName();
+        this.address = faker.address().fullAddress();
+        this.metroStation = faker.address().cityName();
+        this.phone = faker.phoneNumber().phoneNumber();
+        this.rentTime = faker.number().numberBetween(1, 9);
+        this.deliveryDate = simpleDateFormat.format(new Date());
+        this.comment = faker.team().state();
     }
 
     public Order(String firstName, String lastName, String address, String metroStation, String phone, int rentTime, String deliveryDate, String comment) {
